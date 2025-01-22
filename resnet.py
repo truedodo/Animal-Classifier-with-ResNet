@@ -35,9 +35,15 @@ class Model(nn.Module):
         
         # Using ResNet18 as backbone with pretrained weights
         self.backbone = models.resnet18(pretrained=True)
-        self.backbone.classifier = nn.Sequential(
+        
+        # Freezing the backbone's weights
+        for param in self.backbone.parameters():
+            param.requires_grad = False
+        
+        # replacing the classification layer
+        self.backbone.fc = nn.Sequential(
             nn.Dropout(0.4),
-            nn.Linear(self.backbone.classifier[1].in_features, num_classes)
+            nn.Linear(self.backbone.fc[1].in_features, num_classes)
         )
 
     def forward(self, x):
