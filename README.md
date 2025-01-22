@@ -12,5 +12,5 @@ PyTorch implementation of a neural network to classify images of animals using R
 4. (or) You may run this code on Kaggle itself.
 
 # Run
-Firstly, you will have to modify `train_dir` and `test_dir` in your code depending on its location.
-Run the code using `python3 resnet.py`
+Firstly, you will have to modify `train_dir` and `test_dir` in your code depending on its location. <br>
+Then run the code using `python3 resnet.py`
