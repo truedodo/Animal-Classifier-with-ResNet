@@ -21,8 +21,8 @@ transform = transforms.Compose([
 ])
 
 # Dataset and DataLoader
-test_dir = "/kaggle/input/vlg-recruitment-24-challenge/vlg-dataset/test"
-train_dir = "/kaggle/input/vlg-recruitment-24-challenge/vlg-dataset/train"
+test_dir = "/Users/dodo/vlg/vlg-recruitment-24-challenge/vlg-dataset/vlg-dataset/test"
+train_dir = "/Users/dodo/vlg/vlg-recruitment-24-challenge/vlg-dataset/vlg-dataset/train"
 train_dataset = ImageFolder(root=train_dir, transform=transform)
 train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
 
@@ -40,10 +40,12 @@ class Model(nn.Module):
         for param in self.backbone.parameters():
             param.requires_grad = False
         
-        # replacing the classification layer
         self.backbone.fc = nn.Sequential(
-            nn.Dropout(0.4),
-            nn.Linear(self.backbone.fc[1].in_features, num_classes)
+            nn.Dropout(0.2),
+            nn.Linear(self.backbone.fc.in_features, 512),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(512, num_classes)
         )
 
     def forward(self, x):
@@ -51,7 +53,7 @@ class Model(nn.Module):
 
 # Training Setup
 num_classes = len(train_dataset.classes)
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("mps")
 
 model = Model(num_classes).to(device)
 
@@ -64,7 +66,7 @@ optimizer = torch.optim.AdamW(
 )
 
 # Training Loop
-num_epochs = 15
+num_epochs = 10
 for epoch in range(num_epochs):
     model.train()
     total_loss = 0
@@ -109,5 +111,4 @@ for img_name in test_images:
 
 # Save Predictions
 submission = pd.DataFrame(test_predictions, columns=['image_id', 'class'])
-submission.to_csv("/kaggle/working/predictions.csv", index=False)
-
+submission.to_csv("predictionsfinal.csv", index=False)
